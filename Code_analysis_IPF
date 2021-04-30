@@ -1,0 +1,783 @@
+> indir <- file.path("/data2/zhenjun/skin_lung_fibrosis/samtools/sorted")
+> list.files(indir) 
+ [1] "CTR_1_sorted.bam"            "CTR_1_sorted.bam.bai"       
+ [3] "CTR_2_sorted.bam"            "CTR_2_sorted.bam.bai"       
+ [5] "CTR_3_sorted.bam"            "CTR_3_sorted.bam.bai"       
+ [7] "CTR_4_sorted.bam"            "CTR_4_sorted.bam.bai"       
+ [9] "DD_1_sorted.bam"             "DD_1_sorted.bam.bai"        
+[11] "DD_2_sorted.bam"             "DD_2_sorted.bam.bai"        
+[13] "DD_3_sorted.bam"             "DD_3_sorted.bam.bai"        
+[15] "DD_4_sorted.bam"             "DD_4_sorted.bam.bai"        
+[17] "Homo_sapiens.GRCh38.100.gtf" "IPF_1_sorted.bam"           
+[19] "IPF_1_sorted.bam.bai"        "IPF_2_sorted.bam"           
+[21] "IPF_2_sorted.bam.bai"        "IPF_3_sorted.bam"           
+[23] "IPF_3_sorted.bam.bai"        "IPF_4_sorted.bam"           
+[25] "IPF_4_sorted.bam.bai"        "KF_1_sorted.bam"            
+[27] "KF_1_sorted.bam.bai"         "KF_2_sorted.bam"            
+[29] "KF_2_sorted.bam.bai"         "KF_3_sorted.bam"            
+[31] "KF_3_sorted.bam.bai"         "NF_10_sorted.bam"           
+[33] "NF_10_sorted.bam.bai"        "NF_1_sorted.bam"            
+[35] "NF_1_sorted.bam.bai"         "NF_2_sorted.bam"            
+[37] "NF_2_sorted.bam.bai"         "NF_3_sorted.bam"            
+[39] "NF_3_sorted.bam.bai"         "NF_4_sorted.bam"            
+[41] "NF_4_sorted.bam.bai"         "NF_5_sorted.bam"            
+[43] "NF_5_sorted.bam.bai"         "NF_6_sorted.bam"            
+[45] "NF_6_sorted.bam.bai"         "NF_7_sorted.bam"            
+[47] "NF_7_sorted.bam.bai"         "NF_8_sorted.bam"            
+[49] "NF_8_sorted.bam.bai"         "NF_9_sorted.bam"            
+[51] "NF_9_sorted.bam.bai"         "sample.csv"                 
+[53] "sample_DD.csv"               "sample_IPF.csv"             
+[55] "sample_Keloid.csv"          
+> csvfile <- file.path(indir, "sample_IPF.csv")
+> sampleTable <- read.csv(csvfile, row.names = 1)
+> sampleTable
+      CellType SampleName Condition Group Organ
+CTR_1 CTR_0998      CTR_1   Healthy   IPF  Lung
+CTR_2 CTR_0410      CTR_2   Healthy   IPF  Lung
+CTR_3 CTR_0898      CTR_3   Healthy   IPF  Lung
+CTR_4 CTR_0109      CTR_4   Healthy   IPF  Lung
+IPF_1 IPF_0208      IPF_1   Disease   IPF  Lung
+IPF_2 IPF_0607      IPF_2   Disease   IPF  Lung
+IPF_3 IPF_0308      IPF_3   Disease   IPF  Lung
+IPF_4 IPF_0507      IPF_4   Disease   IPF  Lung
+> filenames <- file.path(indir, paste0(sampleTable$SampleName,"_sorted.bam"))
+> file.exists(filenames)
+[1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+> library(Rsamtools)
+Loading required package: GenomeInfoDb
+Loading required package: BiocGenerics
+Loading required package: parallel
+
+Attaching package: \u2018BiocGenerics\u2019
+
+The following objects are masked from \u2018package:parallel\u2019:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+
+The following objects are masked from \u2018package:stats\u2019:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from \u2018package:base\u2019:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which, which.max, which.min
+
+Loading required package: S4Vectors
+Loading required package: stats4
+
+Attaching package: \u2018S4Vectors\u2019
+
+The following object is masked from \u2018package:base\u2019:
+
+    expand.grid
+
+Loading required package: IRanges
+Loading required package: GenomicRanges
+Loading required package: Biostrings
+Loading required package: XVector
+
+Attaching package: \u2018Biostrings\u2019
+
+The following object is masked from \u2018package:base\u2019:
+
+    strsplit
+
+> bamfiles <- BamFileList(filenames, yieldSize=2000000)
+> seqinfo(bamfiles[1])
+Seqinfo object with 194 sequences from an unspecified genome:
+  seqnames   seqlengths isCircular genome
+  1           248956422       <NA>   <NA>
+  10          133797422       <NA>   <NA>
+  11          135086622       <NA>   <NA>
+  12          133275309       <NA>   <NA>
+  13          114364328       <NA>   <NA>
+  ...               ...        ...    ...
+  KI270539.1        993       <NA>   <NA>
+  KI270385.1        990       <NA>   <NA>
+  KI270423.1        981       <NA>   <NA>
+  KI270392.1        971       <NA>   <NA>
+  KI270394.1        970       <NA>   <NA>
+> library(GenomicFeatures)
+Loading required package: AnnotationDbi
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+> gtffile <- file.path(indir,"Homo_sapiens.GRCh38.100.gtf")
+> txdb <- makeTxDbFromGFF(gtffile, format="gtf", circ_seqs=character())
+Import genomic features from the file as a GRanges object ... OK
+Prepare the 'metadata' data frame ... OK
+Make the TxDb object ... OK
+Warning message:
+In .get_cds_IDX(mcols0$type, mcols0$phase) :
+  The "phase" metadata column contains non-NA values for features of type
+  stop_codon. This information was ignored.
+> txdb
+TxDb object:
+# Db type: TxDb
+# Supporting package: GenomicFeatures
+# Data source: /data2/zhenjun/skin_lung_fibrosis/samtools/sorted/Homo_sapiens.GRCh38.100.gtf
+# Organism: NA
+# Taxonomy ID: NA
+# miRBase build ID: NA
+# Genome: NA
+# transcript_nrow: 227954
+# exon_nrow: 747775
+# cds_nrow: 275213
+# Db created by: GenomicFeatures package from Bioconductor
+# Creation time: 2021-01-18 11:07:10 +0800 (Mon, 18 Jan 2021)
+# GenomicFeatures version at creation time: 1.38.0
+# RSQLite version at creation time: 2.1.2
+# DBSCHEMAVERSION: 1.2
+> ebg <- exonsBy(txdb, by="gene")
+> ebg
+GRangesList object of length 60683:
+$ENSG00000000003
+GRanges object with 20 ranges and 2 metadata columns:
+       seqnames              ranges strand |   exon_id       exon_name
+          <Rle>           <IRanges>  <Rle> | <integer>     <character>
+   [1]        X 100627108-100629986      - |    739975 ENSE00001459322
+   [2]        X 100627109-100629986      - |    739976 ENSE00003730948
+   [3]        X 100630759-100630866      - |    739977 ENSE00000868868
+   [4]        X 100632063-100632068      - |    739978 ENSE00003731560
+   [5]        X 100632485-100632568      - |    739979 ENSE00000401072
+   ...      ...                 ...    ... .       ...             ...
+  [16]        X 100635558-100635746      - |    739990 ENSE00003733424
+  [17]        X 100636191-100636689      - |    739991 ENSE00001886883
+  [18]        X 100636608-100636806      - |    739992 ENSE00001855382
+  [19]        X 100636793-100637104      - |    739993 ENSE00001863395
+  [20]        X 100639945-100639991      - |    739994 ENSE00001828996
+  -------
+  seqinfo: 47 sequences from an unspecified genome; no seqlengths
+
+...
+<60682 more elements>
+> library(GenomicAlignments)
+Loading required package: SummarizedExperiment
+Loading required package: DelayedArray
+Loading required package: matrixStats
+
+Attaching package: \u2018matrixStats\u2019
+
+The following objects are masked from \u2018package:Biobase\u2019:
+
+    anyMissing, rowMedians
+
+Loading required package: BiocParallel
+
+Attaching package: \u2018DelayedArray\u2019
+
+The following objects are masked from \u2018package:matrixStats\u2019:
+
+    colMaxs, colMins, colRanges, rowMaxs, rowMins, rowRanges
+
+The following objects are masked from \u2018package:base\u2019:
+
+    aperm, apply, rowsum
+
+> library(BiocParallel)
+> register(SerialParam())
+> se <- summarizeOverlaps(features=ebg, reads=bamfiles, mode="Union", singleEnd=TRUE, ignore.strand=TRUE)
+> se
+class: RangedSummarizedExperiment 
+dim: 60683 8 
+metadata(0):
+assays(1): counts
+rownames(60683): ENSG00000000003 ENSG00000000005 ... ENSG00000288603
+  ENSG00000288604
+rowData names(0):
+colnames(8): CTR_1_sorted.bam CTR_2_sorted.bam ... IPF_3_sorted.bam
+  IPF_4_sorted.bam
+colData names(0):
+> dim(se)
+[1] 60683     8
+> assayNames(se)
+[1] "counts"
+> head(assay(se), 3)
+                CTR_1_sorted.bam CTR_2_sorted.bam CTR_3_sorted.bam
+ENSG00000000003              944             1170              616
+ENSG00000000005                0                0                0
+ENSG00000000419             1372             1015             1214
+                CTR_4_sorted.bam IPF_1_sorted.bam IPF_2_sorted.bam
+ENSG00000000003             1077              806              811
+ENSG00000000005                0                0                0
+ENSG00000000419              896              943             1033
+                IPF_3_sorted.bam IPF_4_sorted.bam
+ENSG00000000003             1294             1373
+ENSG00000000005                0                0
+ENSG00000000419             1304             1116
+> setwd("/data2/zhenjun/skin_lung_fibrosis/graph/IPF")
+> write.csv(assay(se), file = "raw counts_IPF.csv")
+> colSums(assay(se))
+CTR_1_sorted.bam CTR_2_sorted.bam CTR_3_sorted.bam CTR_4_sorted.bam 
+        35333785         33998256         31155242         28904539 
+IPF_1_sorted.bam IPF_2_sorted.bam IPF_3_sorted.bam IPF_4_sorted.bam 
+        30356106         34678662         37370904         33065347 
+> rowRanges(se)
+GRangesList object of length 60683:
+$ENSG00000000003
+GRanges object with 20 ranges and 2 metadata columns:
+       seqnames              ranges strand |   exon_id       exon_name
+          <Rle>           <IRanges>  <Rle> | <integer>     <character>
+   [1]        X 100627108-100629986      - |    739975 ENSE00001459322
+   [2]        X 100627109-100629986      - |    739976 ENSE00003730948
+   [3]        X 100630759-100630866      - |    739977 ENSE00000868868
+   [4]        X 100632063-100632068      - |    739978 ENSE00003731560
+   [5]        X 100632485-100632568      - |    739979 ENSE00000401072
+   ...      ...                 ...    ... .       ...             ...
+  [16]        X 100635558-100635746      - |    739990 ENSE00003733424
+  [17]        X 100636191-100636689      - |    739991 ENSE00001886883
+  [18]        X 100636608-100636806      - |    739992 ENSE00001855382
+  [19]        X 100636793-100637104      - |    739993 ENSE00001863395
+  [20]        X 100639945-100639991      - |    739994 ENSE00001828996
+  -------
+  seqinfo: 47 sequences from an unspecified genome; no seqlengths
+
+...
+<60682 more elements>
+> str(metadata(rowRanges(se)))
+List of 1
+ $ genomeInfo:List of 15
+  ..$ Db type                                 : chr "TxDb"
+  ..$ Supporting package                      : chr "GenomicFeatures"
+  ..$ Data source                             : chr "/data2/zhenjun/skin_lung_fibrosis/samtools/sorted/Homo_sapiens.GRCh38.100.gtf"
+  ..$ Organism                                : chr NA
+  ..$ Taxonomy ID                             : chr NA
+  ..$ miRBase build ID                        : chr NA
+  ..$ Genome                                  : chr NA
+  ..$ transcript_nrow                         : chr "227954"
+  ..$ exon_nrow                               : chr "747775"
+  ..$ cds_nrow                                : chr "275213"
+  ..$ Db created by                           : chr "GenomicFeatures package from Bioconductor"
+  ..$ Creation time                           : chr "2021-01-18 11:07:10 +0800 (Mon, 18 Jan 2021)"
+  ..$ GenomicFeatures version at creation time: chr "1.38.0"
+  ..$ RSQLite version at creation time        : chr "2.1.2"
+  ..$ DBSCHEMAVERSION                         : chr "1.2"
+> colData(se)
+DataFrame with 8 rows and 0 columns
+> colData(se) <- DataFrame(sampleTable)
+> colData(se)
+DataFrame with 8 rows and 5 columns
+      CellType SampleName Condition    Group    Organ
+      <factor>   <factor>  <factor> <factor> <factor>
+CTR_1 CTR_0998      CTR_1   Healthy      IPF     Lung
+CTR_2 CTR_0410      CTR_2   Healthy      IPF     Lung
+CTR_3 CTR_0898      CTR_3   Healthy      IPF     Lung
+CTR_4 CTR_0109      CTR_4   Healthy      IPF     Lung
+IPF_1 IPF_0208      IPF_1   Disease      IPF     Lung
+IPF_2 IPF_0607      IPF_2   Disease      IPF     Lung
+IPF_3 IPF_0308      IPF_3   Disease      IPF     Lung
+IPF_4 IPF_0507      IPF_4   Disease      IPF     Lung
+> round( colSums(assay(se)) / 1e6, 1 )
+CTR_1 CTR_2 CTR_3 CTR_4 IPF_1 IPF_2 IPF_3 IPF_4 
+ 35.3  34.0  31.2  28.9  30.4  34.7  37.4  33.1 
+> library(DESeq2)
+> dds <- DESeqDataSet(se, design = ~ Condition)
+> dds
+class: DESeqDataSet 
+dim: 60683 8 
+metadata(1): version
+assays(1): counts
+rownames(60683): ENSG00000000003 ENSG00000000005 ... ENSG00000288603
+  ENSG00000288604
+rowData names(0):
+colnames(8): CTR_1 CTR_2 ... IPF_3 IPF_4
+colData names(5): CellType SampleName Condition Group Organ
+> dds$Condition <- relevel(dds$Condition, ref = "Healthy")
+> dds$Condition
+[1] Healthy Healthy Healthy Healthy Disease Disease Disease Disease
+Levels: Healthy Disease
+> nrow(dds)
+[1] 60683
+> dds <- dds[ rowSums(counts(dds)) > 1, ]
+> nrow(dds)
+[1] 34062
+> pdf("IPF count distribution boxplots.pdf")
+> librarySizes <- colSums(assay(dds))
+> barplot(librarySizes, names=names(librarySizes), las=2, main="Barplot of library sizes")
+> abline(lty=2)
+> dev.off()
+null device 
+          1 
+> logcounts <- log2(assay(dds) + 1)
+> CellTypeCol <- as.numeric(factor(sampleTable$Condition)) + 1
+> pdf("IPF log2 counts boxplots.pdf")
+> boxplot(logcounts, xlab="", ylab="Log2(Counts)", las=2, col=CellTypeCol)
+> abline(h=median(as.matrix(logcounts)), col="blue")
+> dev.off()
+null device 
+          1 
+> rld <- rlog(dds, blind = FALSE)
+> head(assay(rld), 3)
+                    CTR_1     CTR_2     CTR_3     CTR_4     IPF_1     IPF_2
+ENSG00000000003  9.814888 10.011855  9.515063 10.115753  9.808201  9.753553
+ENSG00000000419 10.238706  9.922126 10.233766  9.981820 10.014901 10.043984
+ENSG00000000457  8.091696  8.363513  7.876164  8.417721  8.001151  8.002639
+                    IPF_3     IPF_4
+ENSG00000000003 10.119868 10.299762
+ENSG00000000419 10.176679 10.137388
+ENSG00000000457  8.272986  7.978649
+> colData(rld)
+DataFrame with 8 rows and 6 columns
+      CellType SampleName Condition    Group    Organ        sizeFactor
+      <factor>   <factor>  <factor> <factor> <factor>         <numeric>
+CTR_1 CTR_0998      CTR_1   Healthy      IPF     Lung  1.08670324151679
+CTR_2 CTR_0410      CTR_2   Healthy      IPF     Lung  1.10525415723355
+CTR_3 CTR_0898      CTR_3   Healthy      IPF     Lung 0.966254923055004
+CTR_4 CTR_0109      CTR_4   Healthy      IPF     Lung 0.917946108918066
+IPF_1 IPF_0208      IPF_1   Disease      IPF     Lung 0.934207426302939
+IPF_2 IPF_0607      IPF_2   Disease      IPF     Lung 0.993747006711251
+IPF_3 IPF_0308      IPF_3   Disease      IPF     Lung  1.09851989756252
+IPF_4 IPF_0507      IPF_4   Disease      IPF     Lung 0.977663104629128
+> pdf("IPF rlog counts boxplots.pdf")
+> boxplot(assay(rld), xlab="", ylab="rlog(Counts)", las=2, col=CellTypeCol)
+> abline(h=median(as.matrix(assay(rld))), col="blue")
+> dev.off()
+null device 
+          1 
+> sampleDists <- dist(t(assay(rld)))
+> sampleDists
+          CTR_1     CTR_2     CTR_3     CTR_4     IPF_1     IPF_2     IPF_3
+CTR_2  76.02430                                                            
+CTR_3  69.46114  99.21424                                                  
+CTR_4  82.69155  74.50413 107.09212                                        
+IPF_1  80.29189  89.86929  94.34829  75.31201                              
+IPF_2  75.32053  86.53407  88.27810  76.48218  56.18615                    
+IPF_3  87.77744  91.33094 111.60876  73.10069  72.72351  82.97814          
+IPF_4  91.24912  96.32561 115.74892  71.08900  74.74769  84.37396  53.24963
+> library(pheatmap)
+> library(RColorBrewer)
+> pdf("IPF Heatmap of sample-to-sample distances using the rlog values.pdf")
+> sampleDistMatrix <- as.matrix( sampleDists )
+> rownames(sampleDistMatrix) <- paste( rld$SampleName, sep = " - " )
+> colnames(sampleDistMatrix) <- paste( rld$SampleName, sep = " - " )
+> colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+> pheatmap(sampleDistMatrix, clustering_distance_rows = sampleDists, clustering_distance_cols = sampleDists, col = colors)
+> dev.off()
+null device 
+          1 
+> library(ggplot2)
+> pcaData <- plotPCA(rld, intgroup = c("Condition", "SampleName"), returnData = TRUE)
+> pcaData
+             PC1        PC2         group Condition SampleName  name
+CTR_1 -23.830486   2.367904 Healthy:CTR_1   Healthy      CTR_1 CTR_1
+CTR_2 -20.429104 -25.876261 Healthy:CTR_2   Healthy      CTR_2 CTR_2
+CTR_3 -34.638906  13.157298 Healthy:CTR_3   Healthy      CTR_3 CTR_3
+CTR_4   8.410001 -10.395255 Healthy:CTR_4   Healthy      CTR_4 CTR_4
+IPF_1  12.894038  13.954012 Disease:IPF_1   Disease      IPF_1 IPF_1
+IPF_2   1.778857  11.736369 Disease:IPF_2   Disease      IPF_2 IPF_2
+IPF_3  26.978235  -6.858561 Disease:IPF_3   Disease      IPF_3 IPF_3
+IPF_4  28.837365   1.914495 Disease:IPF_4   Disease      IPF_4 IPF_4
+> percentVar <- round(100 * attr(pcaData, "percentVar"))
+> pdf("IPF PCA plot using the rlog values with custom ggplot2 code.pdf")
+> ggplot(pcaData, aes(x = PC1, y = PC2, color = SampleName, shape = Condition)) + geom_point(size =3) + xlab(paste0("PC1: ", percentVar[1], "% variance")) + ylab(paste0("PC2: ", percentVar[2], "% variance")) + coord_fixed()
+> dev.off()
+null device 
+          1 
+> pdf("IPF PCA plot using the rlog values with custom ggplot2 code normalized.pdf")
+> ggplot(pcaData, aes(x = PC1, y = PC2, color = SampleName, shape = Condition)) + geom_point(size =3) + xlab(paste0("PC1: ", percentVar[1], "% variance")) + ylab(paste0("PC2: ", percentVar[2], "% variance")) + coord_fixed() + xlim(-35,55) + ylim(-30,20)
+> dev.off()
+null device 
+          1 
+> dds <- DESeq(dds)
+estimating size factors
+estimating dispersions
+gene-wise dispersion estimates
+mean-dispersion relationship
+final dispersion estimates
+fitting model and testing
+> res <- results(dds)
+> res
+log2 fold change (MLE): Condition Disease vs Healthy 
+Wald test p-value: Condition Disease vs Healthy 
+DataFrame with 34062 rows and 6 columns
+                         baseMean      log2FoldChange             lfcSE
+                        <numeric>           <numeric>         <numeric>
+ENSG00000000003  999.903908264033   0.189066337100967 0.286657008947384
+ENSG00000000419   1098.8531828462 -0.0116698276473874 0.185071170616577
+ENSG00000000457  284.031429676136  -0.205718967694033 0.255528260428258
+ENSG00000000460  139.840009011514   0.257800463422535 0.492348101348289
+ENSG00000000971   7326.5381772232   -0.44358706401769 0.392902202542957
+...                           ...                 ...               ...
+ENSG00000288596  82.0284963503799   -0.49673675662735 0.332819549077724
+ENSG00000288597  4.17038697213119   0.731928479169065 0.811132824501061
+ENSG00000288598  9.89469564255357 -0.0661588127086139 0.544203045003451
+ENSG00000288600 0.257221350910806  0.0238782261238453   3.5338115409304
+ENSG00000288602  0.37781894814099   0.724552012325794  2.87150773265771
+                               stat            pvalue              padj
+                          <numeric>         <numeric>         <numeric>
+ENSG00000000003   0.659555954327531  0.50953882746052 0.999374903794163
+ENSG00000000419 -0.0630558914633142  0.94972199787627 0.999374903794163
+ENSG00000000457  -0.805073252364548 0.420777409805056 0.999374903794163
+ENSG00000000460     0.5236142126202 0.600546894154197 0.999374903794163
+ENSG00000000971   -1.12900121492496 0.258897321165119 0.935764738451419
+...                             ...               ...               ...
+ENSG00000288596   -1.49251075546451 0.135565299785996 0.759692807956854
+ENSG00000288597   0.902353421117293 0.366869155983238 0.991911586077698
+ENSG00000288598  -0.121570089171762 0.903239503128128 0.999374903794163
+ENSG00000288600 0.00675707401124128 0.994608675996482                NA
+ENSG00000288602   0.252324590348635 0.800790182568004                NA
+> summary(res)
+
+out of 34062 with nonzero total read count
+adjusted p-value < 0.1
+LFC > 0 (up)       : 413, 1.2%
+LFC < 0 (down)     : 312, 0.92%
+outliers [1]       : 174, 0.51%
+low counts [2]     : 11887, 35%
+(mean count < 3)
+[1] see 'cooksCutoff' argument of ?results
+[2] see 'independentFiltering' argument of ?results
+
+> sum(res$padj < 0.1, na.rm=TRUE)
+[1] 725
+> res05 <- results(dds, alpha=0.05)
+> summary(res05)
+
+out of 34062 with nonzero total read count
+adjusted p-value < 0.05
+LFC > 0 (up)       : 313, 0.92%
+LFC < 0 (down)     : 228, 0.67%
+outliers [1]       : 174, 0.51%
+low counts [2]     : 12545, 37%
+(mean count < 4)
+[1] see 'cooksCutoff' argument of ?results
+[2] see 'independentFiltering' argument of ?results
+
+> sum(res05$padj < 0.05, na.rm=TRUE)
+[1] 541
+> library(AnnotationDbi)
+> library(org.Hs.eg.db)
+
+> columns(org.Hs.eg.db)
+ [1] "ACCNUM"       "ALIAS"        "ENSEMBL"      "ENSEMBLPROT"  "ENSEMBLTRANS"
+ [6] "ENTREZID"     "ENZYME"       "EVIDENCE"     "EVIDENCEALL"  "GENENAME"    
+[11] "GO"           "GOALL"        "IPI"          "MAP"          "OMIM"        
+[16] "ONTOLOGY"     "ONTOLOGYALL"  "PATH"         "PFAM"         "PMID"        
+[21] "PROSITE"      "REFSEQ"       "SYMBOL"       "UCSCKG"       "UNIGENE"     
+[26] "UNIPROT"     
+> res$symbol <- mapIds(org.Hs.eg.db, keys=row.names(res), column="SYMBOL", keytype="ENSEMBL", multiVals="first")
+'select()' returned 1:many mapping between keys and columns
+> res$entrez <- mapIds(org.Hs.eg.db, keys=row.names(res), column="ENTREZID", keytype="ENSEMBL", multiVals="first")
+'select()' returned 1:many mapping between keys and columns
+> res$genename <- mapIds(org.Hs.eg.db, keys=row.names(res), column="GENENAME", keytype="ENSEMBL", multiVals="first")
+'select()' returned 1:many mapping between keys and columns
+> resOrdered <- res[order(res$pvalue),]
+> head(resOrdered)
+log2 fold change (MLE): Condition Disease vs Healthy 
+Wald test p-value: Condition Disease vs Healthy 
+DataFrame with 6 rows and 9 columns
+                        baseMean    log2FoldChange             lfcSE
+                       <numeric>         <numeric>         <numeric>
+ENSG00000165300  93.195595488273  6.07723837488192 0.549261541820079
+ENSG00000231528 191.010495334089  5.77023511536825 0.544279618184325
+ENSG00000225684 189.313520331701  5.75123588359832 0.542828605637661
+ENSG00000211448 111.971448868487  5.69967342284332  0.58281011596697
+ENSG00000162670 343.345659100455 -5.22213887052235 0.601093685843746
+ENSG00000105664 93.6801728327663  4.80356027811496 0.642652163252298
+                             stat               pvalue                 padj
+                        <numeric>            <numeric>            <numeric>
+ENSG00000165300  11.0643799213465 1.86750009277455e-28 4.10868695411329e-24
+ENSG00000231528  10.6016005791606 2.92923444987806e-26 2.30677919464156e-22
+ENSG00000225684  10.5949388515411 3.14546501701045e-26 2.30677919464156e-22
+ENSG00000211448  9.77964051531038 1.37698745229346e-22 7.57377523447709e-19
+ENSG00000162670 -8.68772870770072  3.6975749816767e-18 1.62700694343738e-14
+ENSG00000105664  7.47458820305742 7.74459871308546e-14 2.83981527144322e-10
+                     symbol      entrez
+                <character> <character>
+ENSG00000165300     SLITRK5       26050
+ENSG00000231528     FAM225A      286333
+ENSG00000225684     FAM225B   100128385
+ENSG00000211448        DIO2        1734
+ENSG00000162670      BRINP3      339479
+ENSG00000105664        COMP        1311
+                                                     genename
+                                                  <character>
+ENSG00000165300            SLIT and NTRK like family member 5
+ENSG00000231528  family with sequence similarity 225 member A
+ENSG00000225684  family with sequence similarity 225 member B
+ENSG00000211448                    iodothyronine deiodinase 2
+ENSG00000162670 BMP/retinoic acid inducible neural specific 3
+ENSG00000105664           cartilage oligomeric matrix protein
+> resOrderedDF <- as.data.frame(resOrdered)
+> write.csv(resOrderedDF, file = "IPF_result_all.csv")
+> resSig <- subset(resOrdered, padj < 0.05 & abs(log2FoldChange) > 1.5)
+> write.csv(as.data.frame(resSig), file = "IPF_result_sig.csv")
+> library(genefilter)
+
+Attaching package: \u2018genefilter\u2019
+
+The following objects are masked from \u2018package:matrixStats\u2019:
+
+    rowSds, rowVars
+
+> topVarGenes <- head(order(rowVars(assay(rld)), decreasing = TRUE), 1000)
+> mat <- assay(rld)[ topVarGenes, ]
+> mat <- mat - rowMeans(mat)
+> anno <- as.data.frame(colData(rld)[, c("Condition", "SampleName")])
+> pdf("IPF Top 1000 variable genes across samples pheatmap.pdf")
+> pheatmap(mat, fontsize_row = 4, scale = "row", color = colorRampPalette(c("green","black","red"))(1000), annotation_col = anno)
+> dev.off()
+null device 
+          1 
+> matSig <- assay(rld[row.names(resSig)])
+> pdf("IPF significant genes across samples pheatmap.pdf")
+> pheatmap(matSig, fontsize_row = 4, scale = "row", color = colorRampPalette(rev(brewer.pal(11, "RdBu")))(255), annotation_col = anno)
+> dev.off()
+null device 
+          1 
+> library(apeglm)
+> pdf("IPF mean of normalizad counts.pdf")
+> plotMA(res, ylim=c(-5,5))
+> dev.off()
+null device 
+          1 
+> library(ggplot2)
+> library(ggrepel)
+> resdata <- as.data.frame(res)
+> resdata <- na.omit(resdata)
+> resdata$Threshold = as.factor(ifelse(resdata$padj < 0.05 & abs(resdata$log2FoldChange) > 1.5, ifelse(resdata$log2FoldChange> 1.5,'Up','Down'),'Nonsignificant'))
+> p1 <- ggplot(resdata, aes(x = log2FoldChange, y = -log10(padj), color = Threshold, label=symbol)) + geom_point(size = 1.5, alpha = 0.4) + labs(x = "log2FoldChange", y = "-log10(padj)") + geom_text_repel(data = subset(resdata, resdata$padj < 0.001 & abs(resdata$log2FoldChange)>= 10), aes(label = symbol), size = 3, box.padding = unit(0.5, "lines"), point.padding = unit(0.8, "lines"), segment.color = "black", show.legend = FALSE )
+> p2 <- p1 + geom_vline(xintercept = c(-1.5, 1.5), color = 'black', linetype = 2, size = 0.5) +  geom_hline(yintercept = -log10(0.05), color = 'black', linetype = 2, size = 0.5)
+> pdf("IPF volcano plot.pdf")
+> p2
+> dev.off()
+null device 
+          1
+
+> setwd("/data2/zhenjun/skin_lung_fibrosis/graph/IPF")
+> siggene <- read.csv(file="IPF_result_sig.csv")
+> library(dplyr)
+
+Attaching package: \u2018dplyr\u2019
+
+The following objects are masked from \u2018package:stats\u2019:
+
+    filter, lag
+
+The following objects are masked from \u2018package:base\u2019:
+
+    intersect, setdiff, setequal, union
+
+> siggene <- filter(siggene, entrez != "NA")
+> siggene <- siggene[which(duplicated(siggene$symbol) == F), ] 
+> geneList <- siggene[,3]
+> names(geneList) <- as.character(siggene[,9])
+> geneList <- sort(geneList, decreasing = TRUE)
+> require(DOSE)
+Loading required package: DOSE
+
+DOSE v3.12.0  For help: https://guangchuangyu.github.io/software/DOSE
+
+If you use DOSE in published research, please cite:
+Guangchuang Yu, Li-Gen Wang, Guang-Rong Yan, Qing-Yu He. DOSE: an R/Bioconductor package for Disease Ontology Semantic and Enrichment analysis. Bioinformatics 2015, 31(4):608-609
+
+> library(clusterProfiler)
+Registered S3 method overwritten by 'enrichplot':
+  method               from
+  fortify.enrichResult DOSE
+clusterProfiler v3.14.3  For help: https://guangchuangyu.github.io/software/clusterProfiler
+
+If you use clusterProfiler in published research, please cite:
+Guangchuang Yu, Li-Gen Wang, Yanyan Han, Qing-Yu He. clusterProfiler: an R package for comparing biological themes among gene clusters. OMICS: A Journal of Integrative Biology. 2012, 16(5):284-287.
+> library(org.Hs.eg.db)
+Loading required package: AnnotationDbi
+Loading required package: stats4
+Loading required package: BiocGenerics
+Loading required package: parallel
+
+Attaching package: \u2018BiocGenerics\u2019
+
+The following objects are masked from \u2018package:parallel\u2019:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+
+The following objects are masked from \u2018package:dplyr\u2019:
+
+    combine, intersect, setdiff, union
+
+The following objects are masked from \u2018package:stats\u2019:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from \u2018package:base\u2019:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which, which.max, which.min
+
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+Loading required package: IRanges
+Loading required package: S4Vectors
+
+Attaching package: \u2018S4Vectors\u2019
+
+The following objects are masked from \u2018package:dplyr\u2019:
+
+    first, rename
+
+The following object is masked from \u2018package:base\u2019:
+
+    expand.grid
+
+
+Attaching package: \u2018IRanges\u2019
+
+The following objects are masked from \u2018package:dplyr\u2019:
+
+    collapse, desc, slice
+
+
+Attaching package: \u2018AnnotationDbi\u2019
+
+The following object is masked from \u2018package:dplyr\u2019:
+
+    select
+
+
+> require(Rgraphviz)
+Loading required package: Rgraphviz
+Loading required package: graph
+Loading required package: grid
+
+Attaching package: \u2018Rgraphviz\u2019
+
+The following objects are masked from \u2018package:IRanges\u2019:
+
+    from, to
+
+The following objects are masked from \u2018package:S4Vectors\u2019:
+
+    from, to
+
+> library(enrichplot)
+> library(stringr)
+
+Attaching package: \u2018stringr\u2019
+
+The following object is masked from \u2018package:graph\u2019:
+
+    boundary
+
+> library(ggplot2)
+> library(ggupset)
+> de <- names(geneList)
+> setwd("/data2/zhenjun/skin_lung_fibrosis/graph/IPF/ORA/GO/all")
+> ego <- enrichGO(de, OrgDb = org.Hs.eg.db, keyType = "ENTREZID", ont = "ALL", pAdjustMethod = "BH", pvalueCutoff = 1, qvalueCutoff = 1, readable = TRUE)
+> egorder <- ego[order(ego$pvalue), asis = T]
+> write.csv(as.data.frame(egorder),"GO enrich.csv",row.names =F)
+> ego_sig <- ego[ego$pvalue < 0.05, asis = T]
+> egorder_sig <- ego_sig[order(ego_sig$pvalue), asis = T]
+> write.csv(as.data.frame(egorder_sig),"GO enrich sig.csv",row.names =F)
+> pdf("TOP 10 GO dotplot.pdf", useDingbats = FALSE)
+> dotplot(ego_sig, color = "pvalue", x = "GeneRatio", title = "Gene Ontology", showCategory = 10, font.size = 6, split = "ONTOLOGY") + facet_grid(ONTOLOGY~., scale ="free") + scale_y_discrete(labels=function(ego_sig) str_wrap(ego_sig, width = 35)) + scale_size(range=c(2, 5))
+wrong orderBy parameter; set to default `orderBy = "x"`
+Scale for 'size' is already present. Adding another scale for 'size', which
+will replace the existing scale.
+> dev.off()
+null device 
+          1 
+> setwd("/data2/zhenjun/skin_lung_fibrosis/graph/IPF/ORA/GO/CC")
+> ego_CC <- enrichGO(de, OrgDb = org.Hs.eg.db, keyType = "ENTREZID", ont = "CC", pAdjustMethod = "BH", pvalueCutoff = 1, qvalueCutoff = 1, readable = TRUE)
+> write.csv(as.data.frame(ego_CC),"GO enrich CC.csv",row.names =F)
+> ego_CC_sig <- ego_CC[ego_CC$pvalue < 0.05, asis = T]
+> write.csv(as.data.frame(ego_CC_sig),"GO enrich CC sig.csv",row.names =F)
+> pdf("TOP 10 GO CC barplot.pdf", useDingbats = FALSE)
+> barplot(ego_CC_sig, color = "pvalue", title = "GO Cellular Component", showCategory = 10, font.size = 12) + scale_x_discrete(labels=function(ego_CC_sig) str_wrap(ego_CC_sig, width = 35))
+> dev.off()
+null device 
+          1 
+> pdf("TOP 10 GO CC dotplot.pdf", useDingbats = FALSE)
+> dotplot(ego_CC_sig, color = "pvalue", x = "Count", title = "GO Cellular Component", showCategory = 10, font.size = 12) + scale_y_discrete(labels=function(ego_CC_sig) str_wrap(ego_CC_sig, width = 35))
+wrong orderBy parameter; set to default `orderBy = "x"`
+> dev.off()
+null device 
+          1 
+> pdf("TOP 10 GO CC gene concept network.pdf", useDingbats = FALSE)
+> cnetplot(ego_CC_sig, categorySize="pvalue", showCategory = 10, foldChange=geneList)
+> dev.off()
+null device 
+          1 
+> setwd("/data2/zhenjun/skin_lung_fibrosis/graph/IPF/ORA/GO/BP")
+> ego_BP <- enrichGO(de, OrgDb = org.Hs.eg.db, keyType = "ENTREZID", ont = "BP", pAdjustMethod = "BH", pvalueCutoff = 1, qvalueCutoff = 1, readable = TRUE)
+> write.csv(as.data.frame(ego_BP),"GO enrich BP.csv",row.names =F)
+> ego_BP_sig <- ego_BP[ego_BP$pvalue < 0.05, asis = T]
+> write.csv(as.data.frame(ego_BP_sig),"GO enrich BP sig.csv",row.names =F)
+> pdf("TOP 10 GO BP barplot.pdf", useDingbats = FALSE)
+> barplot(ego_BP_sig, color = "pvalue", title = "GO Biological Process", showCategory = 10, font.size = 12) + scale_x_discrete(labels=function(ego_BP_sig) str_wrap(ego_BP_sig, width = 35))
+> dev.off()
+null device 
+          1 
+> pdf("TOP 10 GO BP dotplot.pdf", useDingbats = FALSE)
+> dotplot(ego_BP_sig, color = "pvalue", x = "Count", title = "GO Biological Process", showCategory = 10, font.size = 12) + scale_y_discrete(labels=function(ego_BP_sig) str_wrap(ego_BP_sig, width = 35)) + scale_size(range=c(2, 7))
+wrong orderBy parameter; set to default `orderBy = "x"`
+Scale for 'size' is already present. Adding another scale for 'size', which
+will replace the existing scale.
+> dev.off()
+null device 
+          1 
+> pdf("TOP 10 GO BP gene concept network.pdf", useDingbats = FALSE)
+> cnetplot(ego_BP_sig, categorySize="pvalue", showCategory = 10, foldChange=geneList)
+> dev.off()
+null device 
+          1 
+> setwd("/data2/zhenjun/skin_lung_fibrosis/graph/IPF/ORA/GO/MF")
+> ego_MF <- enrichGO(de, OrgDb = org.Hs.eg.db, keyType = "ENTREZID", ont = "MF", pAdjustMethod = "BH", pvalueCutoff = 1, qvalueCutoff = 1, readable = TRUE)
+> write.csv(as.data.frame(ego_MF),"GO enrich MF.csv",row.names =F)
+> ego_MF_sig <- ego_MF[ego_MF$pvalue < 0.05, asis = T]
+> write.csv(as.data.frame(ego_MF_sig),"GO enrich MF sig.csv",row.names =F)
+> pdf("TOP 10 GO MF barplot.pdf", useDingbats = FALSE)
+> barplot(ego_MF_sig, color = "pvalue", title = "GO Molecular Function", showCategory = 10, font.size = 12) + scale_x_discrete(labels=function(ego_MF_sig) str_wrap(ego_MF_sig, width = 35))
+> dev.off()
+null device 
+          1 
+> pdf("TOP 10 GO MF dotplot.pdf", useDingbats = FALSE)
+> dotplot(ego_MF_sig, color = "pvalue", x = "Count", title = "GO Molecular Function", showCategory = 10, font.size = 12) + scale_y_discrete(labels=function(ego_MF_sig) str_wrap(ego_MF_sig, width = 35))
+wrong orderBy parameter; set to default `orderBy = "x"`
+> dev.off()
+null device 
+          1 
+> pdf("TOP 10 GO MF gene concept network.pdf", useDingbats = FALSE)
+> cnetplot(ego_MF_sig, categorySize="pvalue", showCategory = 10, foldChange=geneList)
+> dev.off()
+null device 
+          1 
+> setwd("/data2/zhenjun/skin_lung_fibrosis/graph/IPF/ORA/KEGG")
+> kk <- enrichKEGG(de, organism="hsa", pvalueCutoff=1, pAdjustMethod="BH", qvalueCutoff=1)
+> kk <- setReadable(kk, OrgDb = org.Hs.eg.db, keyType="ENTREZID")
+> kk_sig <- kk[kk$pvalue < 0.05, asis = T]
+> write.csv(as.data.frame(kk),"KEGG enrichment.csv",row.names =F)
+> write.csv(as.data.frame(kk_sig),"KEGG enrichment sig.csv",row.names =F)
+> pdf("enrichKEGG barplot.pdf", useDingbats = FALSE)
+> barplot(kk_sig, color = "pvalue", showCategory = 27, font.size = 8, title = "KEGG Enrichment Pathways")
+> dev.off()
+null device 
+          1 
+> pdf("TOP 3 GO gene concept network.pdf", useDingbats = FALSE)
+> cnetplot(kk_sig, categorySize="pvalue", showCategory = 3, foldChange=geneList)
+> dev.off()
+null device 
+          1
+
+
