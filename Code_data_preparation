@@ -1,0 +1,199 @@
+Code for the RNA-seq analysis of fibrotic fibroblasts and normal fibroblasts
+
+zhenjun@MDHS-NIX-029[zhenjun] cd /data2/software/STAR/bin/Linux_x86_64
+zhenjun@MDHS-NIX-029[Linux_x86_64] for ((i=1;i<=4;i++));do ./STAR --genomeDir /data2/zhenjun/index_GRCh38.100 --runThreadN 10 --readFilesIn /data2/zhenjun/skin_lung_fibrosis/fastp/CTR_${i}_trim.fastq.gz --readFilesCommand zcat --outFileNamePrefix /data2/zhenjun/skin_lung_fibrosis/star_aligner/CTR_${i};done
+Jan 11 11:21:32 ..... started STAR run
+Jan 11 11:21:32 ..... loading genome
+Jan 11 11:22:51 ..... started mapping
+Jan 11 11:25:06 ..... finished mapping
+Jan 11 11:25:09 ..... finished successfully
+Jan 11 11:25:09 ..... started STAR run
+Jan 11 11:25:09 ..... loading genome
+Jan 11 11:25:41 ..... started mapping
+Jan 11 11:27:40 ..... finished mapping
+Jan 11 11:27:42 ..... finished successfully
+Jan 11 11:27:42 ..... started STAR run
+Jan 11 11:27:42 ..... loading genome
+Jan 11 11:28:04 ..... started mapping
+Jan 11 11:29:48 ..... finished mapping
+Jan 11 11:29:49 ..... finished successfully
+Jan 11 11:29:49 ..... started STAR run
+Jan 11 11:29:49 ..... loading genome
+Jan 11 11:30:02 ..... started mapping
+Jan 11 11:31:40 ..... finished mapping
+Jan 11 11:31:41 ..... finished successfully
+zhenjun@MDHS-NIX-029[Linux_x86_64] for ((i=1;i<=4;i++));do ./STAR --genomeDir /data2/zhenjun/index_GRCh38.100 --runThreadN 10 --readFilesIn /data2/zhenjun/skin_lung_fibrosis/fastp/IPF_${i}_trim.fastq.gz --readFilesCommand zcat --outFileNamePrefix /data2/zhenjun/skin_lung_fibrosis/star_aligner/IPF_${i};done
+Jan 11 11:41:39 ..... started STAR run
+Jan 11 11:41:39 ..... loading genome
+Jan 11 11:41:54 ..... started mapping
+Jan 11 11:43:35 ..... finished mapping
+Jan 11 11:43:35 ..... finished successfully
+Jan 11 11:43:35 ..... started STAR run
+Jan 11 11:43:35 ..... loading genome
+Jan 11 11:43:50 ..... started mapping
+Jan 11 11:45:43 ..... finished mapping
+Jan 11 11:45:44 ..... finished successfully
+Jan 11 11:45:44 ..... started STAR run
+Jan 11 11:45:44 ..... loading genome
+Jan 11 11:45:56 ..... started mapping
+Jan 11 11:48:00 ..... finished mapping
+Jan 11 11:48:01 ..... finished successfully
+Jan 11 11:48:01 ..... started STAR run
+Jan 11 11:48:01 ..... loading genome
+Jan 11 11:48:12 ..... started mapping
+Jan 11 11:50:04 ..... finished mapping
+Jan 11 11:50:05 ..... finished successfully
+zhenjun@MDHS-NIX-029[Linux_x86_64] for ((i=1;i<=4;i++));do ./STAR --genomeDir /data2/zhenjun/index_GRCh38.100 --runThreadN 10 --readFilesIn /data2/zhenjun/skin_lung_fibrosis/fastp/DD_${i}_trim.fastq.gz --readFilesCommand zcat --outFileNamePrefix /data2/zhenjun/skin_lung_fibrosis/star_aligner/DD_${i};done
+Jan 11 12:07:58 ..... started STAR run
+Jan 11 12:07:58 ..... loading genome
+Jan 11 12:08:13 ..... started mapping
+Jan 11 12:10:29 ..... finished mapping
+Jan 11 12:10:29 ..... finished successfully
+Jan 11 12:10:30 ..... started STAR run
+Jan 11 12:10:30 ..... loading genome
+Jan 11 12:10:42 ..... started mapping
+Jan 11 12:12:29 ..... finished mapping
+Jan 11 12:12:30 ..... finished successfully
+Jan 11 12:12:30 ..... started STAR run
+Jan 11 12:12:30 ..... loading genome
+Jan 11 12:12:42 ..... started mapping
+Jan 11 12:14:28 ..... finished mapping
+Jan 11 12:14:29 ..... finished successfully
+Jan 11 12:14:29 ..... started STAR run
+Jan 11 12:14:29 ..... loading genome
+Jan 11 12:14:41 ..... started mapping
+Jan 11 12:16:17 ..... finished mapping
+Jan 11 12:16:18 ..... finished successfully
+zhenjun@MDHS-NIX-029[Linux_x86_64] for ((i=1;i<=3;i++));do ./STAR --genomeDir /data2/zhenjun/index_GRCh38.100 --runThreadN 10 --readFilesIn /data2/zhenjun/skin_lung_fibrosis/fastp/KF_${i}_trim.fastq.gz --readFilesCommand zcat --outFileNamePrefix /data2/zhenjun/skin_lung_fibrosis/star_aligner/KF_${i};done
+Jan 11 12:24:24 ..... started STAR run
+Jan 11 12:24:24 ..... loading genome
+Jan 11 12:24:37 ..... started mapping
+Jan 11 12:26:32 ..... finished mapping
+Jan 11 12:26:33 ..... finished successfully
+Jan 11 12:26:33 ..... started STAR run
+Jan 11 12:26:33 ..... loading genome
+Jan 11 12:26:48 ..... started mapping
+Jan 11 12:28:36 ..... finished mapping
+Jan 11 12:28:37 ..... finished successfully
+Jan 11 12:28:37 ..... started STAR run
+Jan 11 12:28:37 ..... loading genome
+Jan 11 12:28:49 ..... started mapping
+Jan 11 12:30:42 ..... finished mapping
+Jan 11 12:30:42 ..... finished successfully
+zhenjun@MDHS-NIX-029[Linux_x86_64] for ((i=1;i<=10;i++));do ./STAR --genomeDir /data2/zhenjun/index_GRCh38.100 --runThreadN 10 --readFilesIn /data2/zhenjun/skin_lung_fibrosis/fastp/NF_${i}_trim.fastq.gz --readFilesCommand zcat --outFileNamePrefix /data2/zhenjun/skin_lung_fibrosis/star_aligner/NF_${i};done
+Jan 11 12:31:55 ..... started STAR run
+Jan 11 12:31:55 ..... loading genome
+Jan 11 12:32:07 ..... started mapping
+Jan 11 12:33:32 ..... finished mapping
+Jan 11 12:33:33 ..... finished successfully
+Jan 11 12:33:33 ..... started STAR run
+Jan 11 12:33:33 ..... loading genome
+Jan 11 12:33:45 ..... started mapping
+Jan 11 12:35:18 ..... finished mapping
+Jan 11 12:35:18 ..... finished successfully
+Jan 11 12:35:18 ..... started STAR run
+Jan 11 12:35:18 ..... loading genome
+Jan 11 12:35:31 ..... started mapping
+Jan 11 12:37:05 ..... finished mapping
+Jan 11 12:37:05 ..... finished successfully
+Jan 11 12:37:05 ..... started STAR run
+Jan 11 12:37:05 ..... loading genome
+Jan 11 12:37:18 ..... started mapping
+Jan 11 12:38:54 ..... finished mapping
+Jan 11 12:38:54 ..... finished successfully
+Jan 11 12:38:54 ..... started STAR run
+Jan 11 12:38:55 ..... loading genome
+Jan 11 12:39:07 ..... started mapping
+Jan 11 12:40:46 ..... finished mapping
+Jan 11 12:40:47 ..... finished successfully
+Jan 11 12:40:47 ..... started STAR run
+Jan 11 12:40:47 ..... loading genome
+Jan 11 12:41:00 ..... started mapping
+Jan 11 12:42:52 ..... finished mapping
+Jan 11 12:42:52 ..... finished successfully
+Jan 11 12:42:52 ..... started STAR run
+Jan 11 12:42:52 ..... loading genome
+Jan 11 12:43:04 ..... started mapping
+Jan 11 12:44:44 ..... finished mapping
+Jan 11 12:44:45 ..... finished successfully
+Jan 11 12:44:45 ..... started STAR run
+Jan 11 12:44:45 ..... loading genome
+Jan 11 12:44:56 ..... started mapping
+Jan 11 12:46:35 ..... finished mapping
+Jan 11 12:46:36 ..... finished successfully
+Jan 11 12:46:36 ..... started STAR run
+Jan 11 12:46:36 ..... loading genome
+Jan 11 12:46:49 ..... started mapping
+Jan 11 12:48:27 ..... finished mapping
+Jan 11 12:48:27 ..... finished successfully
+Jan 11 12:48:27 ..... started STAR run
+Jan 11 12:48:27 ..... loading genome
+Jan 11 12:48:39 ..... started mapping
+Jan 11 12:50:18 ..... finished mapping
+Jan 11 12:50:18 ..... finished successfully
+zhenjun@MDHS-NIX-029[Linux_x86_64] cd /data2/software/samtools        [12:50PM]
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=4;i++));do samtools view -bS /data2/zhenjun/skin_lung_fibrosis/star_aligner/CTR_${i}Aligned.out.sam -o /data2/zhenjun/skin_lung_fibrosis/samtools/bam/CTR_${i}.bam;done
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=4;i++));do samtools sort /data2/zhenjun/skin_lung_fibrosis/samtools/bam/CTR_${i}.bam /data2/zhenjun/skin_lung_fibrosis/samtools/sorted/CTR_${i}_sorted;done
+[bam_sort_core] merging from 18 files...
+[bam_sort_core] merging from 18 files...
+[bam_sort_core] merging from 16 files...
+[bam_sort_core] merging from 15 files...
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=4;i++));do samtools index /data2/zhenjun/skin_lung_fibrosis/samtools/sorted/CTR_${i}_sorted.bam;done
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=4;i++));do samtools view -bS /data2/zhenjun/skin_lung_fibrosis/star_aligner/IPF_${i}Aligned.out.sam -o /data2/zhenjun/skin_lung_fibrosis/samtools/bam/IPF_${i}.bam;done
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=4;i++));do samtools sort /data2/zhenjun/skin_lung_fibrosis/samtools/bam/IPF_${i}.bam /data2/zhenjun/skin_lung_fibrosis/samtools/sorted/IPF_${i}_sorted;done
+[bam_sort_core] merging from 15 files...
+[bam_sort_core] merging from 17 files...
+[bam_sort_core] merging from 20 files...
+[bam_sort_core] merging from 17 files...
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=4;i++));do samtools index /data2/zhenjun/skin_lung_fibrosis/samtools/sorted/IPF_${i}_sorted.bam;done
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=4;i++));do samtools view -bS /data2/zhenjun/skin_lung_fibrosis/star_aligner/DD_${i}Aligned.out.sam -o /data2/zhenjun/skin_lung_fibrosis/samtools/bam/DD_${i}.bam;done
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=4;i++));do samtools sort /data2/zhenjun/skin_lung_fibrosis/samtools/bam/DD_${i}.bam /data2/zhenjun/skin_lung_fibrosis/samtools/sorted/DD_${i}_sorted;done
+[bam_sort_core] merging from 21 files...
+[bam_sort_core] merging from 16 files...
+[bam_sort_core] merging from 17 files...
+[bam_sort_core] merging from 16 files...
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=4;i++));do samtools index /data2/zhenjun/skin_lung_fibrosis/samtools/sorted/DD_${i}_sorted.bam;done
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=3;i++));do samtools view -bS /data2/zhenjun/skin_lung_fibrosis/star_aligner/KF_${i}Aligned.out.sam -o /data2/zhenjun/skin_lung_fibrosis/samtools/bam/KF_${i}.bam;done
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=3;i++));do samtools sort /data2/zhenjun/skin_lung_fibrosis/samtools/bam/KF_${i}.bam /data2/zhenjun/skin_lung_fibrosis/samtools/sorted/KF_${i}_sorted;done
+[bam_sort_core] merging from 19 files...
+[bam_sort_core] merging from 18 files...
+[bam_sort_core] merging from 18 files...
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=3;i++));do samtools index /data2/zhenjun/skin_lung_fibrosis/samtools/sorted/KF_${i}_sorted.bam;done
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=10;i++));do samtools view -bS /data2/zhenjun/skin_lung_fibrosis/star_aligner/NF_${i}Aligned.out.sam -o /data2/zhenjun/skin_lung_fibrosis/samtools/bam/NF_${i}.bam;done
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+[samopen] SAM header is present: 194 sequences.
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=10;i++));do samtools sort /data2/zhenjun/skin_lung_fibrosis/samtools/bam/NF_${i}.bam /data2/zhenjun/skin_lung_fibrosis/samtools/sorted/NF_${i}_sorted;done
+[bam_sort_core] merging from 13 files...
+[bam_sort_core] merging from 15 files...
+[bam_sort_core] merging from 15 files...
+[bam_sort_core] merging from 15 files...
+[bam_sort_core] merging from 19 files...
+[bam_sort_core] merging from 20 files...
+[bam_sort_core] merging from 18 files...
+[bam_sort_core] merging from 18 files...
+[bam_sort_core] merging from 19 files...
+[bam_sort_core] merging from 18 files...
+zhenjun@MDHS-NIX-029[samtools] for ((i=1;i<=10;i++));do samtools index /data2/zhenjun/skin_lung_fibrosis/samtools/sorted/NF_${i}_sorted.bam;done
